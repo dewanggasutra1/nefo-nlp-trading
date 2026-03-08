@@ -99,7 +99,7 @@ def analyze_sentiment(news_text):
 
 # Header
 st.title("📈 NEFO NLP - XAUUSD Decision Support System")
-st.markdown("### Kelompok 3 | Foundations of Artificial Intelligence")
+st.markdown("### Kelompok 4 | Foundations of Artificial Intelligence")
 st.markdown("---")
 
 # Sidebar Info
