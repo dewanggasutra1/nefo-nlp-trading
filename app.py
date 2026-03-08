@@ -147,20 +147,42 @@ def get_gold_price():
     Update setiap 60 detik
     """
     try:
-        gold = yf.ticker("GC=F")  # Gold Futures
+        gold = yf.ticker("GC=F")  # Gold Futures COMEX
         hist = gold.history(period="1d", interval="1m")
+        
         if len(hist) > 0:
             current_price = hist['Close'].iloc[-1]
             prev_price = hist['Close'].iloc[-2] if len(hist) > 1 else current_price
             change = current_price - prev_price
             change_pct = (change / prev_price) * 100
+            
+            # Tentukan status pasar berdasarkan waktu (WIB)
+            now = datetime.now()
+            hour = now.hour
+            
+            # Pasar emas buka Senin-Jumat, hampir 24 jam (tutup sebentar tiap hari)
+            is_open = (hour >= 5 and hour < 17) or (hour >= 19 and hour < 24)
+            is_weekend = now.weekday() >= 5  # Sabtu/Minggu
+            
+            if is_weekend:
+                status = " CLOSED (Weekend)"
+                status_color = "🔴"
+            elif is_open:
+                status = "🔴 OPEN"
+                status_color = "🟢"
+            else:
+                status = "🟡 CLOSED (Maintenance)"
+                status_color = "🟡"
+            
             return {
                 "price": current_price,
                 "change": change,
                 "change_pct": change_pct,
-                "history": hist
+                "history": hist,
+                "status": status,
+                "status_color": status_color
             }
-    except:
+    except Exception as e:
         pass
     
     # Fallback data jika API gagal
@@ -169,7 +191,9 @@ def get_gold_price():
         "price": base_price + np.random.uniform(-5, 5),
         "change": np.random.uniform(-2, 2),
         "change_pct": np.random.uniform(-0.1, 0.1),
-        "history": pd.DataFrame(np.random.randn(20, 1), columns=['Close']) + 2650
+        "history": pd.DataFrame(np.random.randn(20, 1), columns=['Close']) + 2650,
+        "status": "⚠️ DATA SIMULASI",
+        "status_color": "🟡"
     }
 
 # ==============================================================================
@@ -238,7 +262,7 @@ with c1:
 with c2:
     st.metric(label="Update Terakhir", value=datetime.now().strftime("%H:%M:%S"))
 with c3:
-    st.metric(label="Status Pasar", value="🔴 OPEN" if datetime.now().hour < 17 else "🟢 CLOSED")
+    st.metric(label="Status Pasar", value=gold_data['status'])
 
 st.markdown("---")
 
