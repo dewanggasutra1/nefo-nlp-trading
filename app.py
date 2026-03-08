@@ -168,4 +168,4 @@ else:
 
 # Footer
 st.markdown("---")
-st.caption(f"© 2024 Kelompok 3 Binus University | Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Prototype v1.0")
+st.caption(f"© 2026 Kelompok 4 Binus University | Generated: {datetime.now().strftime('%Y-%m-%d %H:%M:%S')} | Prototype v1.0")
